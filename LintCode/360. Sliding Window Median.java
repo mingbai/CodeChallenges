@@ -5,7 +5,6 @@
    (If there are even numbers in the array, return the N/2-th number after sorting the element in the window. ) 
 */
 
-
 public class Solution {
 	public List<Integer> medianSlidingWindow(int[] nums, int k) {
 		List<Integer> result = new ArrayList<Integer>();
@@ -14,8 +13,8 @@ public class Solution {
             return result;
         }
 
-        PriorityQueue<Integer> minPQ = new PriorityQueue<Integer>(k/2);
-        PriorityQueue<Integer> maxPQ = new PriorityQueue<Integer>((k + 1) / 2, Collections.reverseOrder());
+        PriorityQueue<Integer> minPQ = new PriorityQueue<Integer>();
+        PriorityQueue<Integer> maxPQ = new PriorityQueue<Integer>(11, Collections.reverseOrder());
 
         int median = nums[0];
         int j = 0;
