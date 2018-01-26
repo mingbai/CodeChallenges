@@ -181,3 +181,61 @@ public int query(SegmentTreeNode root, int start, int end) {
 	return Math.max(left, right);
 }
 
+
+/*
+For an array, we can build a SegmentTree for it, each node stores an extra attribute count to denote the number of elements in the array,
+which value is between interval start and end. (The array may not fully filled by elements)
+Design a query method with three parameters root, start and end, find the number of elements in the in array's interval [start, end] by the given root of value SegmentTree.
+*/
+
+// first define the segment tree node, it's almost the same as above, just replace max with count
+class SegmentTreeNode {
+	public int start;
+	public int end;
+	public int count;
+	public SegmentTreeNode left;
+	public SegmentTreeNode right;
+
+	public SegmentTreeNode(int start, int end, int count) {
+		this.start = start;
+		this.end = end;
+		this.count = count;
+		this.left = null;
+		this.right = null;
+	}
+}
+
+public int query(SegmentTreeNode root, int start, int end) {
+        if (start > end || root == null) {
+            return 0;
+        }
+        
+        if (start <= root.start && root.end <= end) {
+            return root.count;
+        }
+        
+        int mid = root.start + (root.end - root.start) / 2;
+        int left = 0;
+        int right = 0;
+        
+        if (start <= mid) {
+            if (mid < end) {
+                left = query(root.left, start, mid);
+            }
+            else {
+                left = query(root.left, start, end);
+            }
+        }
+        
+        if (mid < end) {
+            if (start <= mid) {
+                right = query(root.right, mid + 1, end);
+            }
+            else {
+                right = query(root.right, start, end);
+            }
+        }
+        return left + right;
+    }
+
+
