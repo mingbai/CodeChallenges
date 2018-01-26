@@ -5,9 +5,9 @@ Each node is constructed with a segment, which states the start and end of the s
 and some attributes on this segent. Thus, some problems which are based on segments can be efficiently solved by using segment tree.
 
 2.	Operations on segment tree
-a.	build segment tree
-b.	modify segment tree
-c.	retrieve segment tree
+a.	build segment tree: O(n)
+b.	modify segment tree: O(log(n))
+c.	retrieve segment tree: O(log(n))s
 */
 
 
