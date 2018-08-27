@@ -1,13 +1,18 @@
 /*
 1.	What is segment tree?
-Segment tree is binary tree。The structure is almost the same as binary tree，each node has two child nodes, left node and right node.
-Each node is constructed with a segment, which states the start and end of the segment.
-and some attributes on this segent. Thus, some problems which are based on segments can be efficiently solved by using segment tree.
+Segment tree is binary tree。The structure is almost the same as binary tree.
+Each node has two child nodes:
+	left node
+	right node
+Each node is constructed with a segment, which states the start and end of the segment:
+	start
+	end
+Thus, some problems which are based on segments can be efficiently solved by using segment tree.
 
 2.	Operations on segment tree
-a.	build segment tree: O(n)
-b.	modify segment tree: O(log(n))
-c.	retrieve segment tree: O(log(n))s
+	a.	build segment tree: O(n)
+	b.	modify segment tree: O(log(n))
+	c.	retrieve segment tree: O(log(n))s
 */
 
 
@@ -15,16 +20,15 @@ c.	retrieve segment tree: O(log(n))s
 /*Operations on SegmentTree/
 // 1. build segment tree
 /*
-The structure of Segment Tree is a binary tree which each node has two attributes start and end denote an segment / interval.
+The structure of Segment Tree is a binary tree which each node has two attributes start and end denote an segment/interval.
 
-start and end are both integers, they should be assigned in following rules:
-
-The root's start and end is given by build method.
-The left child of node A has start=A.left, end=(A.left + A.right) / 2.
-The right child of node A has start=(A.left + A.right) / 2 + 1, end=A.right.
-if start equals to end, there will be no children for this node.
-Implement a build method with two parameters start and end, so that we can create a corresponding segment tree with every node has the correct start and end value,
-return the root of this segment tree.
+Start and end are both integers, they should be assigned in following rules:
+	The root's start and end is given by build method.
+	The left child of node A has start=A.left, end=(A.left + A.right) / 2.
+	The right child of node A has start=(A.left + A.right) / 2 + 1, end=A.right.
+	if start equals to end, there will be no children for this node.
+	Implement a build method with two parameters start and end, so that we can create a corresponding segment tree with every node has the correct start and end value,
+	return the root of this segment tree.
 */
 
 public class SegmentTreeNode {
@@ -57,7 +61,8 @@ public SegmentTreeNode buildSegmentTree(int start, int end) {
 
 /*
 Implement a build method with a given array, so that we can create a corresponding segment tree
-with every node value represent the corresponding interval max value in the array, return the root of this segment tree.
+with every node value represent the corresponding interval max value in the array, 
+return the root of this segment tree.
 */
 public class SegmentTreeNode {
 	public int start;
