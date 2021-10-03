@@ -1,0 +1,4 @@
+BFS的遍历使用queue数据结构，如果只是遍历所有节点，标准代码如下
+void bfs(Node* root) {
+
+}
