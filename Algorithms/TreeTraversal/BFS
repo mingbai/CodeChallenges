@@ -1,4 +1,299 @@
-BFS的遍历使用queue数据结构，如果只是遍历所有节点，标准代码如下
-void bfs(Node* root) {
+// BFS的遍历使用queue数据结构
 
+// ===================================================
+// 基于binary tree的标准遍历
+// ===================================================
+class Node {
+	int value;
+	Node* left;
+	Node* right;
+	Node(int value_) : value(value_), left(nullptr), right(nullptr) {}
+};
+
+void bfs(Node* root, vector<int> nodes) {
+	if (!root) return;
+	queue<Node*> visit_nodes;
+	visit_nodes.push(root);
+	while (!visit_nodes.empty()) {
+		Node* head = visit_nodes.front();
+		nodes.push_back(head->value);
+		if (!head->left) {
+			visit_nodes.push(head->left);
+		}
+		if (!head->right) {
+			visit_nodes.push(head->right);
+		}
+		visit_nodes.pop();
+	}
+}
+
+// 基于binary tree的层序遍历，可记录当前层的节点，以及tree深度
+void bfs (Node* root, vector<vector<int>> nodes_in_level) {
+	queue<Node*> visit_nodes;
+    visit_nodes.push(root);
+    while (!visit_nodes.empty()) {
+        int n = visit_nodes.size();
+        vector<Node*> level;
+        for (int i = 0; i < n; i++) { 
+            // 变量 i 无实际意义，只是为了循环 n 次
+            Node* node = visit_nodes.front();
+            level.push_back(node->value);
+            if (!node->left) {
+                visit_nodes.push(node->left);
+            }
+            if (node->right != null) {
+                visit_nodes.push(node->right);
+            }
+            visit_nodes.pop();
+        }
+        nodes_in_level.push_back(level);
+    }
+}
+
+
+// =====================================================
+// 基于grid的层序遍历
+// =====================================================
+// 常用于解决最短路径问题
+// 以grid为例实现层序遍历的思路为
+// 1. grid[x][y]的相邻4个位置，grid[x-1][y], grid[x+1][y], grid[x][y-1], grid[x][y+1]
+// 2. 判断以上4个位置是否在考虑范围内
+// 3. 将遍历过后的位置标记
+
+// A helper function to validate a position in the grid
+bool isValidPos(vector<vector<int>>& grid, int r, int c) {
+	int row = grid.size();
+	int colum = grid[0].size();
+	return r >= 0 && r < row && c >= 0 && c < colum;
+}
+
+void bfs(vector<vector<int>>& grid, int r, int c) {
+	vector<pair<int, int>> moves = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	queue<pair<int, int>> queue;
+	queue.push(make_pair(r, c));
+	while (!queue.empty()) {
+		distance++;
+		int n = queue.size();
+		for (int i = 0; i < n; i++) {
+			pair<int, int> pos = queue.front();
+			for (pair<int, int> move : moves) {
+				int x_n = pos.first + move.firs;
+				int y_n = pos.second + move.second;
+				if (isValidPos(gird, x_n, y_n) && grid[x_n][y_n] == 0) {
+					grid[x_n][y_n] = 2;
+					queue.push(make_pair(x_n, y_n));
+				}
+			}
+		}
+	}
+}
+
+// BFS完全可以多个格子同时作为起点，只要将符合条件作为起点的格子同时放入queue，再进行层序遍历即可 
+// leetcode 1162. As Far from lan as possible
+int maxDistance(vector<vector<int>>& grid) {
+	int n = grid.size();
+	queue<pair<int, int>> lands;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (grid[i][j] == 1) lands.push(make_pair(i, j)); 
+		}
+	}
+	if (lands.empty() || lands.size() == n * n) return -1;
+	vector<pair<int, int>> moves = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	int distance = -1;
+	while (!lands.empty()) {
+		distance++;
+		int size = lands.size();
+		for (int i = 0; i < size; i++) {
+			pair<int, int> pos = lands.front();
+			lands.pop();
+			for (pair<int, int> move : moves) {
+				int r = pos.first + move.first;
+				int c = pos.second + move.second;
+				if (isValidPos(grid, r, c) && grid[r][c] == 0) {
+					grid[r][c] = 2;
+					lands.push(make_pair(r, c));
+				}
+			}
+		}
+		
+	}
+	return distance;
+}
+
+// leetcode 317. Shortest Distance from All Buildings
+// BFS the steps from each land to all buildings
+// Find the min steps
+class Solution {
+    bool isValidLand(vector<vector<int>>& grid, int r, int c) {
+        int row = grid.size();
+        int col = grid[0].size();
+        return r >= 0 && r < row && c >= 0 && c < col;
+    }
+    
+    int bfsFromLand(vector<vector<int>>& grid, int r, int c, int numBuildings) {
+        vector<pair<int, int>> moves = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int row = grid.size();
+        int col = grid[0].size();
+        
+        int pathSum = 0;
+        queue<pair<int, int>> queue;
+        queue.push({r, c});
+        
+        // Keep track of visited cells
+        vector<vector<bool>> visited(grid.size(), vector<bool> (grid[0].size(), false));
+        visited[r][c] = true;
+        int distance = -1;
+        while (!queue.empty() && numBuildings != 0) {
+            distance++;
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                pair<int, int> cur = queue.front();
+                queue.pop();
+                
+                int r_cur = cur.first;
+                int c_cur = cur.second;
+                if (grid[r_cur][c_cur] == 1) {
+                	numBuildings--;
+                    pathSum += distance;
+                    continue;
+                }
+                
+                for (auto& move : moves) {
+                    int r_next = r_cur + move.first;
+                    int c_next = c_cur + move.second;
+                    if (isValidLand(grid, r_next, c_next) && grid[r_next][c_next] != 2 && !visited[r_next][c_next]) {
+                        queue.push(make_pair(r_next, c_next));
+                        visited[r_next][c_next] = true;
+                    }
+                }
+            }
+        }
+        if (numBuildings != 0) {
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < col; j++) {
+                    if (grid[i][j] == 0 && visited[i][j])
+                        grid[i][j] = 2;
+                }
+            }
+            return INT_MAX;
+        }
+        return pathSum;
+    }
+    
+    
+public:
+    int shortestDistance(vector<vector<int>>& grid) {
+        if (grid.empty()) return -1;
+        int row = grid.size();
+        int col = grid[0].size();
+
+        int numBuildings = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) numBuildings++;
+            }
+        }
+        
+        int ans = INT_MAX;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 0) {
+                    ans = min(ans, bfsFromLand(grid, i, j, numBuildings));
+                }
+            }
+        }
+        
+        return ans == INT_MAX ? -1 : ans;
+    }
+};
+
+
+
+// =============================================================
+// 基于graph的BFS遍历
+// =============================================================
+#include<iostream>
+#include <list>
+ 
+using namespace std;
+ 
+// This class represents a directed graph using
+// adjacency list representation
+class Graph {
+    int V;    // No. of vertices
+ 
+    // Pointer to an array containing adjacency
+    // lists
+    list<int> *adj;  
+public:
+    Graph(int V);  // Constructor
+ 
+    // function to add an edge to graph
+    void addEdge(int v, int w);
+ 
+    // prints BFS traversal from a given source s
+    void BFS(int s); 
+};
+ 
+Graph::Graph(int V_) : V(V_) {
+    adj = new list<int>[V];
+}
+ 
+void Graph::addEdge(int v, int w) {
+    adj[v].push_back(w); // Add w to v’s list.
+}
+ 
+void Graph::BFS(int s) {
+    // Mark all the vertices as not visited
+    bool *visited = new bool[V];
+    for(int i = 0; i < V; i++)
+        visited[i] = false;
+ 
+    // Create a queue for BFS
+    list<int> queue;
+ 
+    // Mark the current node as visited and enqueue it
+    visited[s] = true;
+    queue.push_back(s);
+ 
+    // 'i' will be used to get all adjacent
+    // vertices of a vertex
+    list<int>::iterator i;
+ 
+    while(!queue.empty()) {
+        // Dequeue a vertex from queue and print it
+        s = queue.front();
+        cout << s << " ";
+        queue.pop_front();
+ 
+        // Get all adjacent vertices of the dequeued
+        // vertex s. If a adjacent has not been visited,
+        // then mark it visited and enqueue it
+        for (i = adj[s].begin(); i != adj[s].end(); ++i) {
+            if (!visited[*i]) {
+                visited[*i] = true;
+                queue.push_back(*i);
+            }
+        }
+    }
+}
+ 
+// Driver program to test methods of graph class
+int main() {
+    // Create a graph with 4 vertices, 0, 1, 2, 3
+    Graph g(4);
+    // connect the vertices
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 2);
+    g.addEdge(2, 0);
+    g.addEdge(2, 3);
+    g.addEdge(3, 3);
+ 
+    cout << "Following is Breadth First Traversal "
+         << "(starting from vertex 2) \n";
+    g.BFS(2);
+ 
+    return 0;
 }
