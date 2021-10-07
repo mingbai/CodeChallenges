@@ -1,0 +1,103 @@
+// DFS的遍历使用stack数据结构来实现
+
+// ===================================================
+// 基于binary tree的标准遍历
+// ===================================================
+
+// Using stack
+class Node {
+	int value;
+	Node* left;
+	Node* right;
+	Node(int value_) : value(value_), left(nullptr), right(nullptr) {}
+};
+
+// Preorder traversal: root ==> left ==> right
+void preOrder(Node* root, vector<int> val) {
+	if (!root) return;
+	stack<Node*> stk;
+	stk.push(root);
+	while (!stk.empty()) {
+		Node* head = stk.top();
+		cout << head->val << endl;
+		val.push(head->value);
+		if (!head->left) {
+			stk.push(head->left);
+		}
+		if (!head->right) {
+			stk.push(head->right);
+		}
+		stk.pop();
+	}
+}
+
+// Inorder traversal: left ==> root ==> right
+void inOrder(Node* root, vector<int> val) {
+	if (!root) return;
+	stack<Node*> stk;
+	Node* cur = root;
+	while (cur || !stk.empty()) {
+		while (cur) {
+			stk.push(cur);
+			cur = cur -> left;
+		}
+
+		cur = stk.top();
+		stk.pop();
+		cout << cur->val << endl;
+		cur = cur -> right;
+	}
+}
+
+// Postorder traversal: left ==> right ==> root
+void postOrder(Node* root, vector<int> val) {
+	if (!root) return;
+	stack<Node*> one, two;
+	one.push(root);
+
+	Node* node;
+
+	while (one.empty()) {
+		node = one.top();
+		one.pop();
+		two.push(node);
+
+		if (node->left) {
+			one.push(node->left);
+		}
+		if (node->right) {
+			one.push(node->right);
+		}
+	}
+
+	while (!two.empty()) {
+		node = two.top();
+		two.pop();
+		cout << node->val << endl;
+	}
+}
+
+
+// Using recursion
+
+void preOrder(Node* node) {
+	if (!node) return;
+	cout << node->val << endl;
+	preOrder(node->left);
+	preOrder(node->right);
+}
+
+void inOrder(Node* node) {
+	if (!node) return;
+	inOrder(node->left);
+	cout << node->val << endl;
+	inOrder(node->right);	
+}
+
+void postOrder(Node* node) {
+	if (!node) return;
+	postOrder(node->left);
+	postOrder(node->right);
+	cout << node->val << endl;
+}
+
